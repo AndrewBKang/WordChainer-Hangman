@@ -1,6 +1,11 @@
 require "./tree_node"
+require 'set'
 
 class WordChainer
+  
+  def initialize(dict = 'dictionary.txt')
+    @dict_words = File.readlines(dict).map{|line| line.chomp}
+  end
   
   def find_chain(start_word, end_word)
     first_node = TreeNode.new(start_word)
@@ -9,28 +14,32 @@ class WordChainer
     path(last_node)
   end
   
-  def adjacent_words(word, dict='dictionary.txt')
-    dict_words = File.readlines(dict).map{|line| line.chomp}
-    shortened_dict = dict_words.select{|entry| entry.length == word.length}
+  def adjacent_words(word, candidates)
     
     adj_words = []
     word.length.times do |i|
       ('a'..'z').to_a.each do |letter|
         duped_word = word.dup
         duped_word[i] = letter
-        adj_words << duped_word if shortened_dict.include? duped_word
+        adj_words << duped_word if candidates.include? duped_word
       end
     end
     adj_words
   end
   
   def build_tree(node)
+    
+    candidates = @dict_words.select{|entry| entry.length == node.value.length}
+    candidates = Set.new(candidates) - [node.value]
+    
     nodes = [node]
     visited_words = [node.value]
-    
+
     until nodes.empty?
       current_node = nodes.shift
-      adjacent_words(current_node.value).each do |adj_word|
+      adj_words = adjacent_words(current_node.value, candidates)
+      candidates = candidates - adj_words
+      adj_words.each do |adj_word|
         next if visited_words.include? adj_word
         
         adj_word_node = TreeNode.new(adj_word)
@@ -43,10 +52,10 @@ class WordChainer
   end
   
   def path(node)
-    path = [node.value]
+    path = []
     until node == nil
+      path.unshift(node.value)
       node = node.parent
-      path << node.value
     end
     path
   end

@@ -4,6 +4,7 @@ class TreeNode
   
   def initialize(val)
     @value = val
+    @children = []
   end
   
   def child=(node)
@@ -16,7 +17,7 @@ class TreeNode
     looking_thru = [self]
     
     until looking_thru.empty?
-      node = array.shift
+      node = looking_thru.shift
       return node if node.value == val
       node.children.each do |child|
         looking_thru << child
