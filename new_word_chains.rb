@@ -1,6 +1,6 @@
-require "tree_nodes"
+#require "tree_nodes"
 
-class word_chainer
+class WordChainer
   
   def find_chain(start_word, end_word)
     first_node = TreeNode.new(start_word)
