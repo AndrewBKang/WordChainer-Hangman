@@ -1,4 +1,4 @@
-#require "tree_nodes"
+require "./tree_node"
 
 class WordChainer
   
@@ -29,7 +29,7 @@ class WordChainer
     visited_words = [node.value]
     
     until nodes.empty?
-      current_node = array.shift
+      current_node = nodes.shift
       adjacent_words(current_node.value).each do |adj_word|
         next if visited_words.include? adj_word
         
